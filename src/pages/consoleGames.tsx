@@ -3,14 +3,38 @@ import Card from "../components/card";
 import Navbar from "../components/navbar";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import Filters from "../components/filters";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
-
+import { api } from "../config";
+import type { GamesByConsole } from "../types";
+import { useLocation } from "react-router-dom";
 const ConsoleGames = () => {
   const [isFilterActive, setIsFilterActive] = useState(false);
+  const [gamesByPlatform, setGameByPlatform] = useState<GamesByConsole[]>([]);
+  const [platform, setPlatform] = useState<string | null>("PlayStation");
+  const location = useLocation();
+  const query = `${api}getGamesByPlatform?platformQuery=${platform}`;
   const openFiltersMenu = () => {
     setIsFilterActive(true);
   };
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const platformParam = queryParams.get("platform");
+    setPlatform(platformParam);
+  }, [location.search]);
+
+  useEffect(() => {
+    (async function () {
+      try {
+        const data = await fetch(query);
+        const response = await data.json();
+        console.log(response);
+        setGameByPlatform(response);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, [query]);
 
   return (
     <>
@@ -27,7 +51,7 @@ const ConsoleGames = () => {
               Filtros
             </button>
           </div>
-          <PlatformChoice />
+          <PlatformChoice setPlatform={setPlatform} />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
             PlayStation Games
@@ -44,11 +68,25 @@ const ConsoleGames = () => {
             </button>
           </div>
           <div className="flex w-full flex-wrap gap-5 justify-center">
-            <Card carrouselCard={false} />
-            <Card carrouselCard={false} />
-            <Card carrouselCard={false} />
-            <Card carrouselCard={false} />
+            {gamesByPlatform ? (
+              gamesByPlatform?.map((c) =>
+                c.games.map((game, index) => (
+                  <Card
+                    carrouselCard={false}
+                    name={game.name}
+                    imageUrl={game.imageUrl}
+                    price={game.price}
+                    key={c.}
+                    
+                  />
+                ))
+              )
+            ) : (
+              <h3>No hay juegos epte</h3>
+            )}
+            {}
           </div>
+          
         </div>
       </div>
       <Filters

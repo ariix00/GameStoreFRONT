@@ -10,10 +10,10 @@ interface NavBarProps {
 const Navbar = ({ retroceso }: NavBarProps) => {
   const navigate = useNavigate();
   return (
-    <div className="w-screen fixed m-0 flex justify-between z-20 bg-stone-950 p-3 pt-5">
+    <div className="w-full fixed m-0 flex justify-between z-20 bg-stone-950 p-3 pt-5">
       <button
         className={clx("", retroceso ? "block" : "hidden")}
-        onClick={() => navigate(-1)}
+        onClick={() => navigate("/")}
       >
         <Icon path={mdiArrowLeft} size={1} />
       </button>
