@@ -9,21 +9,33 @@ import { api } from "../config";
 import type { GamesByConsole } from "../types";
 import { useLocation } from "react-router-dom";
 const ConsoleGames = () => {
+  const location = useLocation();
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [gamesByPlatform, setGameByPlatform] = useState<GamesByConsole[]>([]);
-  const [platform, setPlatform] = useState<string | null>("PlayStation");
-  const location = useLocation();
-  const query = `${api}getGamesByPlatform?platformQuery=${platform}`;
+  const [platform, setPlatform] = useState<string | null>(null);
   const openFiltersMenu = () => {
     setIsFilterActive(true);
   };
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const platformParam = queryParams.get("platform");
+    if (!platformParam) return;
     setPlatform(platformParam);
   }, [location.search]);
 
+  const [arrayGenres, setArrayGenres] = useState<string[]>([]);
+
+  let GenresQuery = "";
+  if (arrayGenres.length > 0) {
+    arrayGenres.forEach((genre) => {
+      GenresQuery = GenresQuery + `&genre=${genre}`;
+    });
+  }
+
   useEffect(() => {
+    if (!platform) return;
+    //
+    const query = `${api}getGamesByPlatform?platformQuery=${platform}${GenresQuery}`;
     (async function () {
       try {
         const data = await fetch(query);
@@ -34,7 +46,7 @@ const ConsoleGames = () => {
         console.error(error);
       }
     })();
-  }, [query]);
+  }, [platform]);
 
   return (
     <>
@@ -57,7 +69,14 @@ const ConsoleGames = () => {
             PlayStation Games
           </h1>
           <div className="flex gap-2 text-sm w-11/12 justify-start">
-            <button className="rounded-xl px-2 border-2 border-stone-500">
+            <button
+              className="rounded-xl px-2 border-2 border-stone-500"
+              onClick={() =>
+                console.log(
+                  `${api}getGamesByPlatform?platformQuery=${platform}${GenresQuery}`
+                )
+              }
+            >
               All
             </button>
             <button className="rounded-xl px-2 border-2 border-stone-500">
@@ -67,17 +86,17 @@ const ConsoleGames = () => {
               PS4
             </button>
           </div>
-          <div className="flex w-full flex-wrap gap-5 justify-center">
+          <div className="flex w-full flex-wrap justify-center">
             {gamesByPlatform ? (
               gamesByPlatform?.map((c) =>
                 c.games.map((game, index) => (
                   <Card
+                    id={game.id}
                     carrouselCard={false}
                     name={game.name}
                     imageUrl={game.imageUrl}
                     price={game.price}
-                    key={c.}
-                    
+                    key={index}
                   />
                 ))
               )
@@ -86,12 +105,12 @@ const ConsoleGames = () => {
             )}
             {}
           </div>
-          
         </div>
       </div>
       <Filters
         setIsFilterActive={setIsFilterActive}
         isFilterActive={isFilterActive}
+        setArrayGenres={setArrayGenres}
       />
     </>
   );

@@ -22,4 +22,7 @@ export interface Images {
   url: string;
   type: string;
 }
+export interface Genres {
+  name: string;
+}
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;

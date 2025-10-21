@@ -45,7 +45,7 @@ const GamePage = () => {
                 gameById?.images.find((image) => image.type == "primary")?.url
               }
               alt=""
-              className="w-7/12 text-sm rounded-2xl"
+              className="h-72 text-sm rounded-2xl"
             />
           </div>
           <div className="w-11/12 flex flex-col">

@@ -38,15 +38,11 @@ const FacturaEfectivo = () => {
       <div className="w-11/12 flex border-b-1 border-stone-400">
         <div className="flex flex-col gap-2 w-1/2 py-5 text-stone-500">
           <div className="flex flex-col w-full">
-            <p className="w-full  text-wrap">
-              X5 Persona 5 Standard Edition PS4
-            </p>
+            <p className="w-full  text-wrap">Persona 5 Standard Edition PS4</p>
             <p>$40.000</p>
           </div>
           <div className="flex flex-col w-full">
-            <p className="w-full  text-wrap">
-              X5 Persona 5 Standard Edition PS4
-            </p>
+            <p className="w-full  text-wrap">Persona 5 Standard Edition PS4</p>
             <p>$40.000</p>
           </div>
           <div className="flex flex-col w-full">

@@ -23,7 +23,7 @@ const PlatformChoice = ({ setPlatform }: PlatformsChoiceProps) => {
     })();
   }, []);
   return (
-    <div className="flex gap-10 w-11/12 text-sm justify-center">
+    <div className="flex gap-10 w-11/12 text-sm justify-center overflow-x-scroll">
       {platforms.map((platform, index) => (
         <NavLink to={`/ConsoleGames?platform=${platform.name}`} key={index}>
           <div className=" flex flex-col gap-2 items-center">
