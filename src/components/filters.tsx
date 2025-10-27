@@ -1,7 +1,13 @@
 import { clx } from "../utils/clx";
 import Icon from "@mdi/react";
 import { mdiClose } from "@mdi/js";
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import { api } from "../config";
 import type { Genres } from "../types";
 
@@ -9,15 +15,45 @@ interface FiltersProps {
   setIsFilterActive: (x: boolean) => void;
   isFilterActive: boolean;
   setArrayGenres: Dispatch<SetStateAction<string[]>>;
+  setPricesArray: Dispatch<SetStateAction<number[]>>;
+  pricesArray: number[];
 }
 
 const Filters = ({
   setIsFilterActive,
   isFilterActive,
   setArrayGenres,
+  setPricesArray,
+  pricesArray,
 }: FiltersProps) => {
   const closeFilters = () => {
     setIsFilterActive(false);
+  };
+  const [customPrice, setCustomPrice] = useState(false);
+
+  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    switch (e.target.name) {
+      case "min": {
+        const min = e.target.valueAsNumber;
+
+        if (min < pricesArray[1]) {
+          setPricesArray([min, pricesArray[1]]);
+        }
+        break;
+      }
+
+      case "max": {
+        const max = e.target.valueAsNumber;
+        if (max > pricesArray[0]) {
+          setPricesArray([pricesArray[0], max]);
+        }
+        break;
+      }
+
+      default:
+        break;
+    }
+    console.log(pricesArray);
   };
   const [genres, setGenres] = useState<Genres[]>([]);
   useEffect(() => {
@@ -56,7 +92,7 @@ const Filters = ({
               Precio
             </button>
           </div>
-          <div className="flex flex-col items-start justify-start">
+          <div className="flex flex-col items-start justify-start overflow-y-scroll">
             <div className="w-full flex flex-col full">
               <h1 className="text-lg font-semibold w-full p-2 text-start">
                 Géneros
@@ -88,12 +124,51 @@ const Filters = ({
                 Precio
               </h1>
               <div className="flex flex-col gap-1 p-2">
-                <button className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit">
-                  de $15.000 a $25.000
+                <button
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                  onClick={() => setPricesArray([20000, 30000])}
+                >
+                  de $20.000 a $30.000
                 </button>
-                <button className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit">
-                  de $25.000 a $35.000
+                <button
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                  onClick={() => setPricesArray([30000, 40000])}
+                >
+                  de $30.000 a $40.000
                 </button>
+                <button
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                  onClick={() => setPricesArray([40000, 50000])}
+                >
+                  de $40.000 a $50.000
+                </button>
+
+                {/* <button
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                  onClick={() => setCustomPrice(true)}
+                >
+                  Elegir Precio
+                </button>
+                <div className="flex">
+                  <input
+                    type="number"
+                    name="min"
+                    placeholder="Min. Precio"
+                    className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                    onChange={handlePriceChange}
+                    defaultValue={0}
+                    disabled={!customPrice}
+                  />
+                  <input
+                    type="number"
+                    name="max"
+                    placeholder="Máx. Precio"
+                    className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
+                    onChange={handlePriceChange}
+                    defaultValue={10000}
+                    disabled={!customPrice}
+                  />
+                </div> */}
               </div>
             </div>
           </div>

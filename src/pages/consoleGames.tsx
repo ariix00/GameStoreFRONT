@@ -25,28 +25,44 @@ const ConsoleGames = () => {
 
   const [arrayGenres, setArrayGenres] = useState<string[]>([]);
 
-  let GenresQuery = "";
-  if (arrayGenres.length > 0) {
-    arrayGenres.forEach((genre) => {
-      GenresQuery = GenresQuery + `&genre=${genre}`;
+  const [arrayPrices, setArrayPrices] = useState<number[]>([0, 0]);
+
+  let pricesQuery = "";
+  if (arrayPrices.length > 0) {
+    arrayPrices.forEach((price) => {
+      pricesQuery = pricesQuery + `&pricesQuery=${price}`;
     });
   }
+  let genresQuery = "";
+  if (arrayGenres.length > 0) {
+    arrayGenres.forEach((genre) => {
+      genresQuery = genresQuery + `&genresQuery=${genre}`;
+    });
+  }
+
+  const fetchData = async () => {
+    const query = `${api}getGamesByPlatform?platformQuery=${platform}${genresQuery}${pricesQuery}`;
+
+    try {
+      const data = await fetch(query);
+      const response = await data.json();
+      console.log(response);
+      setGameByPlatform(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     if (!platform) return;
     //
-    const query = `${api}getGamesByPlatform?platformQuery=${platform}${GenresQuery}`;
-    (async function () {
-      try {
-        const data = await fetch(query);
-        const response = await data.json();
-        console.log(response);
-        setGameByPlatform(response);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+    // const query = `${api}getGamesByPlatform?platformQuery=PlayStation&genresQuery=Acción&genresQuery=RPG`;
+
+    fetchData();
   }, [platform]);
+  useEffect(() => {
+    console.log(arrayPrices);
+  }, [arrayPrices]);
 
   return (
     <>
@@ -71,11 +87,7 @@ const ConsoleGames = () => {
           <div className="flex gap-2 text-sm w-11/12 justify-start">
             <button
               className="rounded-xl px-2 border-2 border-stone-500"
-              onClick={() =>
-                console.log(
-                  `${api}getGamesByPlatform?platformQuery=${platform}${GenresQuery}`
-                )
-              }
+              onClick={() => fetchData()}
             >
               All
             </button>
@@ -111,6 +123,8 @@ const ConsoleGames = () => {
         setIsFilterActive={setIsFilterActive}
         isFilterActive={isFilterActive}
         setArrayGenres={setArrayGenres}
+        setPricesArray={setArrayPrices}
+        pricesArray={arrayPrices}
       />
     </>
   );
