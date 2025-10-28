@@ -39,9 +39,14 @@ const ConsoleGames = () => {
       genresQuery = genresQuery + `&genresQuery=${genre}`;
     });
   }
+  const [consoles, setConsoles] = useState("");
+  let consolesQuery = "";
+  if (consoles) {
+    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
+  }
 
   const fetchData = async () => {
-    const query = `${api}getGamesByPlatform?platformQuery=${platform}${genresQuery}${pricesQuery}`;
+    const query = `${api}getGamesByPlatform?platformQuery=${platform}${consolesQuery}${genresQuery}${pricesQuery}`;
 
     try {
       const data = await fetch(query);
@@ -59,7 +64,7 @@ const ConsoleGames = () => {
     // const query = `${api}getGamesByPlatform?platformQuery=PlayStation&genresQuery=Acción&genresQuery=RPG`;
 
     fetchData();
-  }, [platform]);
+  }, [platform, consolesQuery]);
   useEffect(() => {
     console.log(arrayPrices);
   }, [arrayPrices]);
@@ -79,7 +84,7 @@ const ConsoleGames = () => {
               Filtros
             </button>
           </div>
-          <PlatformChoice setPlatform={setPlatform} />
+          <PlatformChoice setPlatform={setPlatform} setConsoles={setConsoles} />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
             PlayStation Games
@@ -87,16 +92,21 @@ const ConsoleGames = () => {
           <div className="flex gap-2 text-sm w-11/12 justify-start">
             <button
               className="rounded-xl px-2 border-2 border-stone-500"
-              onClick={() => fetchData()}
+              onClick={() => setConsoles("")}
             >
               All
             </button>
-            <button className="rounded-xl px-2 border-2 border-stone-500">
-              PS5
-            </button>
-            <button className="rounded-xl px-2 border-2 border-stone-500">
-              PS4
-            </button>
+            {gamesByPlatform.map((c, index) => (
+              <button
+                key={index}
+                className="rounded-xl px-2 border-2 border-stone-500"
+                onClick={() => (
+                  setConsoles(c.consoleName), console.log(consoles)
+                )}
+              >
+                {c.consoleName}
+              </button>
+            ))}
           </div>
           <div className="flex w-full flex-wrap justify-center">
             {gamesByPlatform ? (
@@ -120,9 +130,11 @@ const ConsoleGames = () => {
         </div>
       </div>
       <Filters
+        fetchData={fetchData}
         setIsFilterActive={setIsFilterActive}
         isFilterActive={isFilterActive}
         setArrayGenres={setArrayGenres}
+        arrayGenres={arrayGenres}
         setPricesArray={setArrayPrices}
         pricesArray={arrayPrices}
       />

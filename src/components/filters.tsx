@@ -4,7 +4,7 @@ import { mdiClose } from "@mdi/js";
 import {
   useEffect,
   useState,
-  type ChangeEvent,
+  // type ChangeEvent,
   type Dispatch,
   type SetStateAction,
 } from "react";
@@ -17,6 +17,8 @@ interface FiltersProps {
   setArrayGenres: Dispatch<SetStateAction<string[]>>;
   setPricesArray: Dispatch<SetStateAction<number[]>>;
   pricesArray: number[];
+  arrayGenres: string[];
+  fetchData: () => void;
 }
 
 const Filters = ({
@@ -24,36 +26,46 @@ const Filters = ({
   isFilterActive,
   setArrayGenres,
   setPricesArray,
-  pricesArray,
+  // pricesArray,
+  arrayGenres,
+  fetchData,
 }: FiltersProps) => {
   const closeFilters = () => {
     setIsFilterActive(false);
   };
-  const [customPrice, setCustomPrice] = useState(false);
+  // const [customPrice, setCustomPrice] = useState(false);
 
-  const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    switch (e.target.name) {
-      case "min": {
-        const min = e.target.valueAsNumber;
+  // const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   switch (e.target.name) {
+  //     case "min": {
+  //       const min = e.target.valueAsNumber;
 
-        if (min < pricesArray[1]) {
-          setPricesArray([min, pricesArray[1]]);
-        }
-        break;
-      }
+  //       if (min < pricesArray[1]) {
+  //         setPricesArray([min, pricesArray[1]]);
+  //       }
+  //       break;
+  //     }
 
-      case "max": {
-        const max = e.target.valueAsNumber;
-        if (max > pricesArray[0]) {
-          setPricesArray([pricesArray[0], max]);
-        }
-        break;
-      }
+  //     case "max": {
+  //       const max = e.target.valueAsNumber;
+  //       if (max > pricesArray[0]) {
+  //         setPricesArray([pricesArray[0], max]);
+  //       }
+  //       break;
+  //     }
 
-      default:
-        break;
+  //     default:
+  //       break;
+  //   }
+  //   console.log(pricesArray);
+  // };
+  const [active, setActive] = useState(false);
+  const handleActive = () => {
+    if (active == true) {
+      setActive(false);
+    } else {
+      setActive(true);
     }
-    console.log(pricesArray);
   };
   const [genres, setGenres] = useState<Genres[]>([]);
   useEffect(() => {
@@ -83,6 +95,7 @@ const Filters = ({
             <Icon path={mdiClose} size={1} />
           </button>
         </div>
+
         <div className="w-full flex h-full text-xs">
           <div className="flex flex-col h-full overflow-y-scroll max-w-28 min-w-28">
             <button className="w-full text-start p-4 border-b-1 border-stone-950 bg-stone-900">
@@ -102,16 +115,20 @@ const Filters = ({
                   ? genres.map((genre, index) => (
                       <button
                         key={index}
-                        className="rounded-2xl border-2 p-1 px-3 border-stone-700"
-                        onClick={() =>
+                        className={clx(
+                          "rounded-2xl border-2 p-1 px-3 border-stone-700",
+                          arrayGenres.includes(genre.name) ? "bg-stone-500" : ""
+                        )}
+                        onClick={() => (
                           setArrayGenres((prev) => {
                             if (prev.includes(genre.name)) {
                               return prev.filter((g) => g !== genre.name);
                             } else {
                               return [...prev, genre.name];
                             }
-                          })
-                        }
+                          }),
+                          handleActive()
+                        )}
                       >
                         {genre.name}
                       </button>
@@ -171,6 +188,22 @@ const Filters = ({
                 </div> */}
               </div>
             </div>
+          </div>
+          <div
+            className={clx(
+              "fixed w-full  left-0 p-2 flex justify-center text-center pb-2 bg-stone-800 gap-5 font-bold duration-300 transition-all",
+              isFilterActive ? "bottom-0" : "top-[100%]"
+            )}
+          >
+            <button className="w-3/12 p-1 text-yellow-300">
+              Limpiar Filtros
+            </button>
+            <button
+              className="w-6/12 bg-yellow-300 text-stone-950 rounded-sm p-1"
+              onClick={() => fetchData()}
+            >
+              Ver Resultados
+            </button>
           </div>
         </div>
       </div>
