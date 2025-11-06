@@ -22,7 +22,6 @@ const ConsoleGames = () => {
     if (!platformParam) return;
     setPlatform(platformParam);
   }, [location.search]);
-
   const [arrayGenres, setArrayGenres] = useState<string[]>([]);
 
   const [arrayPrices, setArrayPrices] = useState<number[]>([0, 0]);

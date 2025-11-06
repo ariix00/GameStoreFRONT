@@ -1,15 +1,50 @@
+import { mdiMinus, mdiPlus } from "@mdi/js";
+import Icon from "@mdi/react";
+import { CartContext } from "../context/CartContext";
+import { useContext, useState } from "react";
+
 interface AgregarProductoProps {
   price: number | undefined;
+  name: string | undefined;
+  image: string | undefined;
 }
-const AgregarProducto = ({ price }: AgregarProductoProps) => {
+const AgregarProducto = ({ name, image, price }: AgregarProductoProps) => {
+  const [count, setCount] = useState<number>(1);
+  const { handleCartItem, cartItem } = useContext(CartContext);
+
   return (
     <div className="fixed flex bottom-0 flex-col w-full items-center gap-2 py-5 bg-stone-950">
       <h1 className="font-bold w-11/12 text-lg">${price}</h1>
       <div className="flex justify-around w-11/12 gap-2 h-8">
-        <button className="rounded-xl bg-red-500 text-white font-bold flex grow justify-center items-center">
-          Comprar Ahora
-        </button>
-        <button className="rounded-xl  text-white font-bold flex grow justify-center items-center">
+        <div className="flex justify-around p-2 1/2 border-1 border-stone-500 h-full w-5/12 items-center rounded-2xl">
+          <button
+            onClick={() => {
+              if (count >= 2) {
+                setCount(count - 1);
+              }
+            }}
+          >
+            <Icon path={mdiMinus} size={1} />
+          </button>
+          <p className="p-2">{count}</p>
+          <button onClick={() => setCount(count + 1)}>
+            <Icon path={mdiPlus} size={1} />
+          </button>
+        </div>
+        <button
+          className="rounded-2xl bg-orange-500 p-2 w-7/12 text-white font-bold flex justify-center items-center"
+          onClick={() =>
+            handleCartItem(
+              {
+                name: name,
+                image: image,
+                price: price,
+                count: count,
+              },
+              cartItem
+            )
+          }
+        >
           Agregar al Carrito
         </button>
       </div>

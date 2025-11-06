@@ -1,10 +1,9 @@
-import Icon from "@mdi/react";
 import AgregarProducto from "../components/agregarProducto";
-import { mdiArrowLeft } from "@mdi/js";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../config";
 import type { GameById } from "../types";
+import Navbar from "../components/navbar";
 
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,23 +21,20 @@ const GamePage = () => {
       }
     })();
   }, [query]);
-  const navigate = useNavigate();
   return (
     <>
+      <Navbar retroceso={true} />
       <div
-        className={`relative bg-[url("${
-          gameById?.images.find((image) => image.type == "secondary")?.url
-        }")] bg-cover bg-no-repeat bg-fixed`}
+        className="relative bg-cover bg-no-repeat bg-center"
+        style={{
+          backgroundImage: `url(${
+            gameById?.images.find((image) => image.type === "secondary")?.url
+          })`,
+        }}
       >
-        <button
-          className="absolute top-2 left-2 z-40"
-          onClick={() => navigate(-1)}
-        >
-          <Icon path={mdiArrowLeft} size={1} />
-        </button>
         <div className="absolute inset-0 bg-black/70"></div>
 
-        <div className="relative z-10 flex flex-col items-center gap-5 h-screen w-screen text-sm backdrop-blur-xs">
+        <div className="relative z-10 flex flex-col items-center gap-5 h-screen w-screen text-sm backdrop-blur-xl pt-20">
           <div className="flex w-full justify-center h-72 p-2">
             <img
               src={
@@ -50,7 +46,7 @@ const GamePage = () => {
           </div>
           <div className="w-11/12 flex flex-col">
             <h1 className="text-lg font-bold">{gameById?.name}</h1>
-            <h2 className="text-lg font-bold">${gameById?.price}</h2>
+            <h2 className="text-lg font-regular">${gameById?.price}</h2>
           </div>
           <div className="w-11/12">{gameById?.description}</div>
           <div className="w-11/12 flex flex-col gap-2">
@@ -63,7 +59,13 @@ const GamePage = () => {
               ))}
             </div>
           </div>
-          <AgregarProducto price={gameById?.price} />
+          <AgregarProducto
+            price={gameById?.price}
+            image={
+              gameById?.images.find((image) => image.type == "primary")?.url
+            }
+            name={gameById?.name}
+          />
         </div>
       </div>
     </>

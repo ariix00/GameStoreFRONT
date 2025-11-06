@@ -56,17 +56,19 @@ const Landing = () => {
       <div className="w-full h-fit relative text-sm">
         <div className="absolute z-10 flex flex-col justify-end items-center w-full h-full">
           <div className="flex flex-col gap-5 p-14 items-center">
-            {imageUrl && <img src={`${imageUrl}`} className="w-11/12" />}
+            {imageUrl && <img src={`${imageUrl}`} className=" max-h-40" />}
             <h1 className="text-white font-semibold text-justify">
               {latestGame?.latestGame.description}
             </h1>
             <button
-              className="font-bold bg-white text-black py-3 px-10 rounded-xl"
+              className="font-bold bg-white text-black py-3 px-10 rounded-xl cursor-pointer hover:bg-black hover:text-white duration-300"
               onClick={() => navigate(`/Game/${latestGame?.latestGame.id}`)}
             >
               Compra Ya!
             </button>
-            <button className="font-bold text-white">Añadir al carrito</button>
+            <button className="font-bold text-white cursor-pointer hover:text-yellow-300 duration-300">
+              Agregar al carrito
+            </button>
           </div>
         </div>
         <img
@@ -78,7 +80,7 @@ const Landing = () => {
               : ""
           }
           alt=""
-          className="h-screen w-full brightness-50 object-cover"
+          className="h-[70vh] w-full brightness-50 object-cover"
         />
       </div>
       <h1 className="text-white font-bold w-11/12 text-lg text-center m-0">

@@ -12,14 +12,14 @@ export interface Game {
 }
 export interface GameById {
   id: UUID;
-  name: string;
+  name: string | undefined;
   description: string;
-  price: number;
+  price: number | undefined;
   images: Images[];
   genres: string[];
 }
 export interface Images {
-  url: string;
+  url: string | undefined;
   type: string;
 }
 export interface Genres {

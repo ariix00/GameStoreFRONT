@@ -8,7 +8,7 @@ interface Platforms {
 interface PlatformsChoiceProps {
   setPlatform: (x: string) => void;
 
-  setConsoles: (x: string) => void;
+  setConsoles?: (x: string) => void;
 }
 const PlatformChoice = ({
   setPlatform,
@@ -37,10 +37,12 @@ const PlatformChoice = ({
     <div className="flex gap-10 w-11/12 text-sm justify-center overflow-x-scroll">
       {platforms.map((platform, index) => (
         <NavLink to={`/ConsoleGames?platform=${platform.name}`} key={index}>
-          <div className=" flex flex-col gap-2 items-center">
+          <div className=" flex flex-col gap-2 items-center cursor-pointer">
             <button
-              onClick={() => (setPlatform(platform.name), setConsoles(""))}
-              className="rounded-4xl bg-white h-16 w-16 flex justify-center items-center p-2"
+              onClick={() => (
+                setPlatform(platform.name), setConsoles ? setConsoles("") : null
+              )}
+              className="rounded-4xl bg-white h-16 w-16 flex justify-center items-center p-2 cursor-pointer"
             >
               <img alt="" className="w-full" src={platform.url}></img>
             </button>

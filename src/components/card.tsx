@@ -42,11 +42,7 @@ const Card = ({ carrouselCard, name, price, imageUrl, id }: CardProps) => {
             "w-full flex",
             carrouselCard ? "justify-start" : "justify-end"
           )}
-        >
-          <button className="font-black text-orange-400 rounded-xl cursor-pointer hover:text-orange-100 duration-200 mr-2">
-            Agregar al Carrito
-          </button>
-        </div>
+        ></div>
       </div>
     </NavLink>
   );
