@@ -7,24 +7,54 @@ import { useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
 import { api } from "../config";
 import type { GamesByConsole } from "../types";
-import { useLocation } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 const ConsoleGames = () => {
-  const location = useLocation();
+  const navigate = useNavigate();
+
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [gamesByPlatform, setGameByPlatform] = useState<GamesByConsole[]>([]);
-  const [platform, setPlatform] = useState<string | null>(null);
+  const { platform } = useParams<{ platform: string }>();
+  const [platforms, setPlatforms] = useState<string[] | null>(null);
   const openFiltersMenu = () => {
     setIsFilterActive(true);
   };
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const platformParam = queryParams.get("platform");
-    if (!platformParam) return;
-    setPlatform(platformParam);
-  }, [location.search]);
+  //  const queryParams = new URLSearchParams(location.search);
+  //     const platformParam = queryParams.get("platform");
+  //     if (!platformParam) return;
+  //     setPlatform(platformParam);
   const [arrayGenres, setArrayGenres] = useState<string[]>([]);
 
   const [arrayPrices, setArrayPrices] = useState<number[]>([0, 0]);
+  const [consoles, setConsoles] = useState("");
+  let consolesQuery = "";
+  if (consoles) {
+    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
+  }
+  useEffect(() => {
+    (async function () {
+      try {
+        const data = await fetch(`${api}getPlatformNames`);
+        const response = await data.json();
+        setPlatforms(response);
+
+        console.log(response);
+      } catch (error) {
+        console.log("error fetching databro", error);
+      }
+    })();
+  }, []);
+  // if (platforms === null) return <p>Cargando...</p>;
+
+  useEffect(() => {
+    if (!platform) return;
+    if (platforms == null) return;
+    console.log(platform, platforms);
+    console.log(platforms.includes(platform));
+    if (!platform || !platforms.includes(platform)) {
+      navigate("/404");
+    }
+    fetchData();
+  }, [platform, platforms]);
 
   let pricesQuery = "";
   if (arrayPrices.length > 0) {
@@ -38,14 +68,10 @@ const ConsoleGames = () => {
       genresQuery = genresQuery + `&genresQuery=${genre}`;
     });
   }
-  const [consoles, setConsoles] = useState("");
-  let consolesQuery = "";
-  if (consoles) {
-    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
-  }
 
   const fetchData = async () => {
-    const query = `${api}getGamesByPlatform?platformQuery=${platform}${consolesQuery}${genresQuery}${pricesQuery}`;
+    const query = `${api}getGamesByPlatform/${platform}?${consolesQuery}${pricesQuery}${genresQuery}`;
+    console.log(query);
 
     try {
       const data = await fetch(query);
@@ -56,17 +82,6 @@ const ConsoleGames = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    if (!platform) return;
-    //
-    // const query = `${api}getGamesByPlatform?platformQuery=PlayStation&genresQuery=Acción&genresQuery=RPG`;
-
-    fetchData();
-  }, [platform, consolesQuery]);
-  useEffect(() => {
-    console.log(arrayPrices);
-  }, [arrayPrices]);
 
   return (
     <>
@@ -83,7 +98,7 @@ const ConsoleGames = () => {
               Filtros
             </button>
           </div>
-          <PlatformChoice setPlatform={setPlatform} setConsoles={setConsoles} />
+          <PlatformChoice />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
             PlayStation Games

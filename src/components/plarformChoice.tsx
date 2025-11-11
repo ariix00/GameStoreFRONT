@@ -5,16 +5,11 @@ interface Platforms {
   name: string;
   url: string;
 }
-interface PlatformsChoiceProps {
-  setPlatform: (x: string) => void;
-
-  setConsoles?: (x: string) => void;
-}
-const PlatformChoice = ({
-  setPlatform,
-
-  setConsoles,
-}: PlatformsChoiceProps) => {
+// interface PlatformsChoiceProps {
+//   // setPlatform: (x: string) => void;
+//   // setConsoles?: (x: string) => void;
+// }
+const PlatformChoice = () => {
   const [platforms, setPlatforms] = useState<Platforms[]>([]);
   useEffect(() => {
     (async function () {
@@ -22,7 +17,6 @@ const PlatformChoice = ({
         const data = await fetch(`${api}getPlatforms`);
         const response = await data.json();
         setPlatforms(response);
-        console.log(response);
       } catch (error) {
         console.log("error fetching databro", error);
       }
@@ -36,12 +30,12 @@ const PlatformChoice = ({
   return (
     <div className="flex gap-10 w-11/12 text-sm justify-center overflow-x-scroll">
       {platforms.map((platform, index) => (
-        <NavLink to={`/ConsoleGames?platform=${platform.name}`} key={index}>
+        <NavLink to={`/ConsoleGames/${platform.name}`} key={index}>
           <div className=" flex flex-col gap-2 items-center cursor-pointer">
             <button
-              onClick={() => (
-                setPlatform(platform.name), setConsoles ? setConsoles("") : null
-              )}
+              // onClick={() => (
+              //   setPlatform(platform.name), setConsoles ? setConsoles("") : null
+              // )}
               className="rounded-4xl bg-white h-16 w-16 flex justify-center items-center p-2 cursor-pointer"
             >
               <img alt="" className="w-full" src={platform.url}></img>

@@ -45,6 +45,9 @@ const GamePage = () => {
             />
           </div>
           <div className="w-11/12 flex flex-col">
+            <h1 className="w-full text-end font-medium text-stone-500">
+              Restantes: {gameById?.stock}
+            </h1>
             <h1 className="text-lg font-bold">{gameById?.name}</h1>
             <h2 className="text-lg font-regular">${gameById?.price}</h2>
           </div>
@@ -60,6 +63,7 @@ const GamePage = () => {
             </div>
           </div>
           <AgregarProducto
+            stock={gameById?.stock}
             price={gameById?.price}
             image={
               gameById?.images.find((image) => image.type == "primary")?.url

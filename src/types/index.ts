@@ -12,11 +12,12 @@ export interface Game {
 }
 export interface GameById {
   id: UUID;
-  name: string | undefined;
+  name: string;
   description: string;
-  price: number | undefined;
+  price: number;
   images: Images[];
   genres: string[];
+  stock: number | undefined;
 }
 export interface Images {
   url: string | undefined;

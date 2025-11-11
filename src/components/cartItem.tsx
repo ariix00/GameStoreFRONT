@@ -1,5 +1,7 @@
 import { mdiMinus, mdiPlus, mdiTrashCan } from "@mdi/js";
 import Icon from "@mdi/react";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 export interface CartItemProps {
   name: string | undefined;
   image: string | undefined;
@@ -23,8 +25,13 @@ const CartItem = ({ name, image, price, count }: CartItemProps) => {
             <Icon path={mdiPlus} size={1} />
           </button>
         </div>
-
-        <Icon path={mdiTrashCan} size={1} />
+        <button
+        // onClick={() => setCartItem((prev: CartItem[]) =>
+        //   removeCartItemFromCart(name, cartItem)
+        // )}
+        >
+          <Icon path={mdiTrashCan} size={1} />
+        </button>
       </div>
     </div>
   );

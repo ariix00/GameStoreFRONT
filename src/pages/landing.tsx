@@ -43,7 +43,6 @@ const Landing = () => {
         const data = await fetch(`${api}getLatestGame`);
         const response: LatestGameData = await data.json();
         setLatestGame(response);
-        console.log(response);
       } catch (error) {
         console.log("error fetching data", error);
       }
@@ -86,7 +85,7 @@ const Landing = () => {
       <h1 className="text-white font-bold w-11/12 text-lg text-center m-0">
         Selecciona tu Plataforma
       </h1>
-      <PlatformChoice setPlatform={setPlatform} />
+      <PlatformChoice />
       <div className="w-full flex flex-col text-xl gap-5 items-center overflow-x-scroll">
         <h1 className="text-white font-bold w-11/12 text-lg m-0">
           Podría interesarte
