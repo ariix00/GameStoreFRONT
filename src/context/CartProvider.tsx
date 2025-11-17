@@ -1,55 +1,84 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, type PropsWithChildren } from "react";
-import { CartContext, type CartItem } from "./CartContext";
+import { CartContext, type CartItem, type findByname } from "./CartContext";
 
 export const CartProvider = ({ children }: PropsWithChildren) => {
   const [cartItem, setCartItem] = useState<CartItem[]>([]);
   const [addCartNotAvailable, setAddCartNotAvailable] =
     useState<boolean>(false);
+  const [cartCount, setCartCount] = useState<number>(0);
+
   const handleCartItem = (addCart: CartItem, cartItem: CartItem[]) => {
-    const alreadyOnCart = cartItem.find((item) => item.name === addCart.name);
-    if (alreadyOnCart) {
-      alreadyOnCart.count += addCart.count;
-      if (alreadyOnCart.stock) {
-        if (alreadyOnCart.count > alreadyOnCart.stock) {
-          alreadyOnCart.count = alreadyOnCart.stock;
-          setAddCartNotAvailable(true);
-          setTimeout(() => {
-            setAddCartNotAvailable(false);
-          }, 2000);
+    const existing = cartItem.find((item) => item.name === addCart.name);
+
+    if (existing) {
+      return cartItem.map((item) => {
+        if (item.name === addCart.name) {
+          const newCount = item.count + addCart.count;
+
+          // if (newCount > item.stock) {
+          //   newCount = item.stock;
+
+          //   setAddCartNotAvailable(true);
+          //   setTimeout(() => setAddCartNotAvailable(false), 2000);
+          // }
+          if (newCount > item.stock) {
+            setAddCartNotAvailable(true);
+            setTimeout(() => setAddCartNotAvailable(false), 2000);
+          } else {
+            return { ...item, count: newCount };
+          }
         }
-      }
-    } else {
-      setCartItem((prev) => [...prev, addCart]);
+        return item;
+      });
     }
-    return cartItem;
+
+    console.log("agregado");
+    return [...cartItem, { ...addCart }];
   };
+
+  // return cartItem.map((item) => {
+  //   if (item.name == addCart.name) {
+  //     if (item.count > item.stock) {
+  //       setAddCartNotAvailable(true);
+  //       setTimeout(() => {
+  //         setAddCartNotAvailable(false);
+  //       }, 2000);
+  //       return { ...item, count: item.stock };
+  //     }
+  //     return { ...item, count: item.count + addCart.count };
+  //   } else {
+  //     setCartItem((prev) => [...prev, addCart]);
+  //   }
+  //   return item;
+  // });
+
   const increaseCartItemFromCart = (
     increaseByName: string,
-
     cartItem: CartItem[]
   ) => {
-    const currentCartItem = cartItem.find(
-      (item) => item.name === increaseByName
-    );
-    if (currentCartItem && currentCartItem.stock) {
-      if (currentCartItem.count < currentCartItem.stock) {
-        currentCartItem.count += 1;
+    return cartItem.map((item) => {
+      if (item.name === increaseByName) {
+        if (item.stock && item.count < item.stock) {
+          console.log("sumado");
+          return { ...item, count: item.count + 1 };
+        }
       }
-    }
+      return item;
+    });
   };
   const decreaseCartItemFromCart = (
     decreaseByName: string,
-    cartItem: CartItem[]
+    cart: CartItem[]
   ) => {
-    const currentCartItem = cartItem.find(
-      (item) => item.name === decreaseByName
-    );
-    if (currentCartItem && currentCartItem.stock) {
-      if (currentCartItem.count > 1) {
-        currentCartItem.count -= 1;
+    return cart.map((item) => {
+      if (item.name === decreaseByName) {
+        if (item.stock && item.count > 1) {
+          return { ...item, count: item.count - 1 };
+        }
       }
-    }
+      return item;
+    });
   };
 
   const removeCartItemFromCart = (
@@ -57,6 +86,13 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     cartItem: CartItem[]
   ) => {
     return cartItem.filter((item) => item.name !== removeByName);
+  };
+
+  const cartCountFunction = (cartItem: CartItem[], cartCount: number) => {
+    cartItem.forEach((item) => {
+      cartCount += item.count;
+    });
+    return cartCount;
   };
 
   return (
@@ -70,6 +106,9 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
         addCartNotAvailable,
         setAddCartNotAvailable,
         setCartItem,
+        setCartCount,
+        cartCountFunction,
+        cartCount,
       }}
     >
       {children}

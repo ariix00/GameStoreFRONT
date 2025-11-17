@@ -3,12 +3,18 @@ import Icon from "@mdi/react";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
 export interface CartItemProps {
-  name: string | undefined;
-  image: string | undefined;
-  price: number | undefined;
+  name: string;
+  image: string;
+  price: number;
   count: number;
 }
 const CartItem = ({ name, image, price, count }: CartItemProps) => {
+  const {
+    increaseCartItemFromCart,
+    decreaseCartItemFromCart,
+    setCartItem,
+    removeCartItemFromCart,
+  } = useContext(CartContext);
   return (
     <div className="flex gap-5 w-full h-20 items-center justify-between bg-stone-800 p-2 rounded-xl">
       <div className="flex gap-5 h-11/12">
@@ -17,18 +23,26 @@ const CartItem = ({ name, image, price, count }: CartItemProps) => {
       </div>
       <div className="flex gap-2 items-center">
         <div className="flex h-fit bg-stone-500 rounded-xl items-center p-1 gap-2">
-          <button>
+          <button
+            onClick={() =>
+              setCartItem((prev) => decreaseCartItemFromCart(name, prev))
+            }
+          >
             <Icon path={mdiMinus} size={1} />
           </button>
           <p>{count}</p>
-          <button>
+          <button
+            onClick={() =>
+              setCartItem((prev) => increaseCartItemFromCart(name, prev))
+            }
+          >
             <Icon path={mdiPlus} size={1} />
           </button>
         </div>
         <button
-        // onClick={() => setCartItem((prev: CartItem[]) =>
-        //   removeCartItemFromCart(name, cartItem)
-        // )}
+          onClick={() =>
+            setCartItem((prev) => removeCartItemFromCart(name, prev))
+          }
         >
           <Icon path={mdiTrashCan} size={1} />
         </button>

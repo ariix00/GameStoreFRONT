@@ -11,7 +11,7 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <div className="w-full min-h-screen m-0 p-0 bg-stone-950 flex flex-col items-start gap-10 text-white">
+        <div className="w-full min-h-screen m-0 p-0 bg-stone-950 flex flex-col items-start gap-10 text-white relative">
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/ConsoleGames/:platform" element={<ConsoleGames />} />

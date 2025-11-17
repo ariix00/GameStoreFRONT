@@ -5,10 +5,10 @@ import { useContext, useState } from "react";
 import { clx } from "../utils/clx";
 
 interface AgregarProductoProps {
-  price: number | undefined;
-  name: string | undefined;
-  image: string | undefined;
-  stock: number | undefined;
+  price: number;
+  name: string;
+  image: string;
+  stock: number;
 }
 const AgregarProducto = ({
   name,
@@ -17,7 +17,7 @@ const AgregarProducto = ({
   stock,
 }: AgregarProductoProps) => {
   const [count, setCount] = useState<number>(1);
-  const { handleCartItem, cartItem, addCartNotAvailable } =
+  const { handleCartItem, addCartNotAvailable, setCartItem } =
     useContext(CartContext);
 
   return (
@@ -58,15 +58,17 @@ const AgregarProducto = ({
         <button
           className="rounded-2xl bg-orange-500 p-2 w-7/12 text-white font-bold flex justify-center items-center"
           onClick={() =>
-            handleCartItem(
-              {
-                name: name,
-                image: image,
-                price: price,
-                count: count,
-                stock: stock,
-              },
-              cartItem
+            setCartItem((prev) =>
+              handleCartItem(
+                {
+                  name: name,
+                  image: image,
+                  price: price,
+                  count: count,
+                  stock: stock,
+                },
+                prev
+              )
             )
           }
         >

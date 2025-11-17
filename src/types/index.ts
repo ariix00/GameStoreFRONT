@@ -17,10 +17,10 @@ export interface GameById {
   price: number;
   images: Images[];
   genres: string[];
-  stock: number | undefined;
+  stock: number;
 }
 export interface Images {
-  url: string | undefined;
+  url: string;
   type: string;
 }
 export interface Genres {

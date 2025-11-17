@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
 import { api } from "../config";
 import type { GamesByConsole } from "../types";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const ConsoleGames = () => {
   const navigate = useNavigate();
 

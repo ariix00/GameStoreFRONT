@@ -20,8 +20,9 @@ const Cart = () => {
         <h2 className="w-11/12 text-start font-bold text-sm p-2">Productos</h2>
         <div className="w-11/12 flex flex-col gap-5 border-b-2 border-stone-500 pb-2">
           {cartItem ? (
-            cartItem.map((item) => (
+            cartItem.map((item, index) => (
               <CartItem
+                key={index}
                 count={item.count}
                 image={item.image}
                 name={item.name}
