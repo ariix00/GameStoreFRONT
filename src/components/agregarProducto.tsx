@@ -1,6 +1,6 @@
 import { mdiMinus, mdiPlus } from "@mdi/js";
 import Icon from "@mdi/react";
-import { CartContext } from "../context/CartContext";
+import { GamesContext } from "../context/GamesContext";
 import { useContext, useState } from "react";
 import { clx } from "../utils/clx";
 
@@ -18,10 +18,10 @@ const AgregarProducto = ({
 }: AgregarProductoProps) => {
   const [count, setCount] = useState<number>(1);
   const { handleCartItem, addCartNotAvailable, setCartItem } =
-    useContext(CartContext);
+    useContext(GamesContext);
 
   return (
-    <div className="fixed flex bottom-0 flex-col w-full items-center gap-2 py-5 bg-stone-950">
+    <div className="fixed flex bottom-0 flex-col w-full items-center gap-2 py-5 bg-stone-950 z-50">
       <h1
         className={clx(
           "text-red-400",

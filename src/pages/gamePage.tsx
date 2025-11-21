@@ -27,7 +27,7 @@ const GamePage = () => {
       <Navbar retroceso={true} />
       {gameById ? (
         <div
-          className="relative bg-cover bg-no-repeat bg-center"
+          className="bg-cover bg-no-repeat bg-center w-full"
           style={{
             backgroundImage: `url(${getImageUrl(
               gameById.images,
@@ -35,9 +35,9 @@ const GamePage = () => {
             )})`,
           }}
         >
-          <div className="absolute inset-0 bg-black/70"></div>
+          <div className="absolute inset-0 bg-black/70 w-full"></div>
 
-          <div className="relative z-10 flex flex-col items-center gap-5 h-screen w-screen text-sm backdrop-blur-xl pt-20">
+          <div className="relative z-10 flex flex-col items-center gap-5 h-screen w-full text-sm backdrop-blur-xl">
             <div className="flex w-full justify-center h-72 p-2">
               <img
                 src={getImageUrl(gameById.images, "primary")}
@@ -63,14 +63,13 @@ const GamePage = () => {
                 ))}
               </div>
             </div>
-
-            <AgregarProducto
-              stock={gameById.stock}
-              price={gameById.price}
-              image={getImageUrl(gameById.images, "primary")}
-              name={gameById.name}
-            />
           </div>
+          <AgregarProducto
+            stock={gameById.stock}
+            price={gameById.price}
+            image={getImageUrl(gameById.images, "primary")}
+            name={gameById.name}
+          />
         </div>
       ) : (
         <h2 className="w-full">Cargando página...</h2>

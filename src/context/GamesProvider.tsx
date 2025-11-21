@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, type PropsWithChildren } from "react";
-import { CartContext, type CartItem, type findByname } from "./CartContext";
+import { GamesContext, type CartItem, type findByname } from "./GamesContext";
+import { useParams } from "react-router-dom";
 
-export const CartProvider = ({ children }: PropsWithChildren) => {
+export const GamesProvider = ({ children }: PropsWithChildren) => {
   const [cartItem, setCartItem] = useState<CartItem[]>([]);
   const [addCartNotAvailable, setAddCartNotAvailable] =
     useState<boolean>(false);
   const [cartCount, setCartCount] = useState<number>(0);
+  const [search, setSearch] = useState<string>("");
+  const [platform, setPlatform] = useState<string>("PlayStation");
 
+  console.log("se recagrgó la pagina");
   const handleCartItem = (addCart: CartItem, cartItem: CartItem[]) => {
     const existing = cartItem.find((item) => item.name === addCart.name);
 
@@ -95,8 +99,13 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
     return cartCount;
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
+    console.log(search);
+  };
+
   return (
-    <CartContext.Provider
+    <GamesContext.Provider
       value={{
         handleCartItem,
         increaseCartItemFromCart,
@@ -109,9 +118,13 @@ export const CartProvider = ({ children }: PropsWithChildren) => {
         setCartCount,
         cartCountFunction,
         cartCount,
+        handleSearch,
+        search,
+        platform,
+        setPlatform,
       }}
     >
       {children}
-    </CartContext.Provider>
+    </GamesContext.Provider>
   );
 };

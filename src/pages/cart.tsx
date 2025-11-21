@@ -3,11 +3,11 @@ import CartItem from "../components/cartItem";
 import { useNavigate } from "react-router-dom";
 import { mdiArrowLeft } from "@mdi/js";
 import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+import { GamesContext } from "../context/GamesContext";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { cartItem } = useContext(CartContext);
+  const { cartItem } = useContext(GamesContext);
   return (
     <>
       <div className="w-full flex flex-col items-center p-2">

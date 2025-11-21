@@ -1,7 +1,7 @@
 import { mdiMinus, mdiPlus, mdiTrashCan } from "@mdi/js";
 import Icon from "@mdi/react";
 import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+import { GamesContext } from "../context/GamesContext";
 export interface CartItemProps {
   name: string;
   image: string;
@@ -14,7 +14,7 @@ const CartItem = ({ name, image, price, count }: CartItemProps) => {
     decreaseCartItemFromCart,
     setCartItem,
     removeCartItemFromCart,
-  } = useContext(CartContext);
+  } = useContext(GamesContext);
   return (
     <div className="flex gap-5 w-full h-20 items-center justify-between bg-stone-800 p-2 rounded-xl">
       <div className="flex gap-5 h-11/12">

@@ -10,13 +10,14 @@ import {
 } from "react";
 import { api } from "../config";
 import type { Genres } from "../types";
+import { useSearchParams } from "react-router-dom";
 
 interface FiltersProps {
   setIsFilterActive: (x: boolean) => void;
   isFilterActive: boolean;
   setArrayGenres: Dispatch<SetStateAction<string[]>>;
-  setPricesArray: Dispatch<SetStateAction<number[]>>;
-  pricesArray: number[];
+  setPricesArray: Dispatch<SetStateAction<string[]>>;
+  pricesArray: string[];
   arrayGenres: string[];
   fetchData: () => void;
 }
@@ -33,6 +34,8 @@ const Filters = ({
   const closeFilters = () => {
     setIsFilterActive(false);
   };
+  const [searchParams, setSearchParams] = useSearchParams();
+
   // const [customPrice, setCustomPrice] = useState(false);
 
   // const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -116,7 +119,7 @@ const Filters = ({
                       <button
                         key={index}
                         className={clx(
-                          "rounded-2xl border-2 p-1 px-3 border-stone-700",
+                          "rounded-2xl border-2 p-1 px-3 border-stone-700 cursor-pointer",
                           arrayGenres.includes(genre.name) ? "bg-stone-500" : ""
                         )}
                         onClick={() => (
@@ -142,20 +145,20 @@ const Filters = ({
               </h1>
               <div className="flex flex-col gap-1 p-2">
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                  onClick={() => setPricesArray([20000, 30000])}
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
+                  onClick={() => setPricesArray(["20000", "30000"])}
                 >
                   de $20.000 a $30.000
                 </button>
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                  onClick={() => setPricesArray([30000, 40000])}
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
+                  onClick={() => setPricesArray(["30000", "40000"])}
                 >
                   de $30.000 a $40.000
                 </button>
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                  onClick={() => setPricesArray([40000, 50000])}
+                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
+                  onClick={() => setPricesArray(["40000", "50000"])}
                 >
                   de $40.000 a $50.000
                 </button>
@@ -195,11 +198,16 @@ const Filters = ({
               isFilterActive ? "bottom-0" : "top-[100%]"
             )}
           >
-            <button className="w-3/12 p-1 text-yellow-300">
+            <button
+              className="w-3/12 p-1 text-yellow-300 cursor-pointer border-2 rounded-sm"
+              onClick={() => (
+                setSearchParams(), setArrayGenres([]), setPricesArray([])
+              )}
+            >
               Limpiar Filtros
             </button>
             <button
-              className="w-6/12 bg-yellow-300 text-stone-950 rounded-sm p-1"
+              className="w-6/12 bg-yellow-300 text-stone-950 rounded-sm p-1 cursor-pointer"
               onClick={() => fetchData()}
             >
               Ver Resultados

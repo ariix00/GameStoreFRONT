@@ -3,58 +3,80 @@ import Card from "../components/card";
 import Navbar from "../components/navbar";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import Filters from "../components/filters";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
 import { api } from "../config";
 import type { GamesByConsole } from "../types";
-import { useNavigate, useParams } from "react-router-dom";
-const ConsoleGames = () => {
-  const navigate = useNavigate();
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { GamesContext } from "../context/GamesContext";
 
+const ConsoleGames = () => {
+  console.log("sola");
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [gamesByPlatform, setGameByPlatform] = useState<GamesByConsole[]>([]);
-  const { platform } = useParams<{ platform: string }>();
+  const [search, setSearch] = useState<string | null>(null);
+
   const [platforms, setPlatforms] = useState<string[] | null>(null);
   const openFiltersMenu = () => {
     setIsFilterActive(true);
   };
-  //  const queryParams = new URLSearchParams(location.search);
-  //     const platformParam = queryParams.get("platform");
+
   //     if (!platformParam) return;
   //     setPlatform(platformParam);
   const [arrayGenres, setArrayGenres] = useState<string[]>([]);
 
-  const [arrayPrices, setArrayPrices] = useState<number[]>([0, 0]);
+  const [arrayPrices, setArrayPrices] = useState<string[]>([]);
   const [consoles, setConsoles] = useState("");
+
+  const { setPlatform } = useContext(GamesContext);
+  const { platformValue } = useParams<{ platformValue: string | undefined }>();
+
+  // useEffect(() => {
+  //   const queryParams = new URLSearchParams(location.search);
+  //   const genresParams = queryParams.getAll("genresQuery");
+  //   if (!genresParams) return;
+  //   setArrayGenres(genresParams);
+  // }, []);
   let consolesQuery = "";
   if (consoles) {
     consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
   }
+
   useEffect(() => {
     (async function () {
       try {
+        const pricesParams = searchParams.getAll("pricesQuery");
+        if (pricesParams.length != 0) {
+          setArrayPrices(pricesParams);
+        }
+        const genresParams = searchParams.getAll("genresQuery");
+        if (genresParams.length != 0) {
+          setArrayGenres(genresParams);
+        }
+        const searchParam = searchParams.get("searchQuery");
+        setSearch(searchParam);
         const data = await fetch(`${api}getPlatformNames`);
         const response = await data.json();
-        setPlatforms(response);
 
-        console.log(response);
+        setPlatforms(response);
       } catch (error) {
         console.log("error fetching databro", error);
       }
     })();
-  }, []);
+  }, [searchParams]);
   // if (platforms === null) return <p>Cargando...</p>;
 
   useEffect(() => {
-    if (!platform) return;
+    if (!platformValue) return;
     if (platforms == null) return;
-    console.log(platform, platforms);
-    console.log(platforms.includes(platform));
-    if (!platform || !platforms.includes(platform)) {
+    if (!platformValue || !platforms.includes(platformValue)) {
       navigate("/404");
     }
     fetchData();
-  }, [platform, platforms]);
+    // setPlatform(platformValue);
+  }, [platformValue, platforms]);
 
   let pricesQuery = "";
   if (arrayPrices.length > 0) {
@@ -68,15 +90,30 @@ const ConsoleGames = () => {
       genresQuery = genresQuery + `&genresQuery=${genre}`;
     });
   }
+  let searchQuery = "";
+  if (search) {
+    searchQuery = searchQuery + `&searchQuery=${search}`;
+  }
 
   const fetchData = async () => {
-    const query = `${api}getGamesByPlatform/${platform}?${consolesQuery}${pricesQuery}${genresQuery}`;
+    const query = `${api}getGamesByPlatform/${platformValue}?${consolesQuery}${pricesQuery}${genresQuery}${searchQuery}`;
     console.log(query);
+    const params = new URLSearchParams();
+
+    arrayPrices.forEach((price) => {
+      params.append("pricesQuery", `${price}`);
+    });
+    arrayGenres.forEach((genre) => {
+      params.append("genresQuery", genre);
+    });
+    if (search) {
+      params.append("searchQuery", search);
+    }
+    setSearchParams(params);
 
     try {
       const data = await fetch(query);
       const response = await data.json();
-      console.log(response);
       setGameByPlatform(response);
     } catch (error) {
       console.error(error);
@@ -87,7 +124,6 @@ const ConsoleGames = () => {
     <>
       <div className="w-screen relative text-sm">
         <Navbar retroceso={true} />
-        <div className="h-15"></div>
         <div className="w-full flex flex-col text-xl gap-5 items-center ">
           <div className="w-full border-b-1 border-stone-500 flex">
             <button

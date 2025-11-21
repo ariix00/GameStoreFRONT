@@ -51,7 +51,7 @@ const Landing = () => {
     <>
       <Navbar retroceso={false} />
       {latestGame && (
-        <>
+        <div className="gap-10 flex flex-col w-full">
           <div className="w-full h-fit relative text-sm">
             <div className="absolute z-10 flex flex-col justify-end items-center w-full h-full">
               <div className="flex flex-col gap-5 p-14 items-center">
@@ -105,7 +105,7 @@ const Landing = () => {
               )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </>
   );
