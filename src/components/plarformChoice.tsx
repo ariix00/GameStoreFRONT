@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { api } from "../config";
 interface Platforms {
   name: string;
@@ -10,6 +10,7 @@ interface Platforms {
 //   // setConsoles?: (x: string) => void;
 // }
 const PlatformChoice = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [platforms, setPlatforms] = useState<Platforms[]>([]);
   useEffect(() => {
     (async function () {
@@ -31,7 +32,15 @@ const PlatformChoice = () => {
   return (
     <div className="flex gap-10 w-11/12 text-sm justify-center overflow-x-scroll">
       {platforms.map((platform, index) => (
-        <NavLink to={`/ConsoleGames/${platform.name}`} key={index}>
+        <NavLink
+          to={`/ConsoleGames/${platform.name}`}
+          key={index}
+          onClick={() =>
+            setSearchParams((prev) => 
+              prev.delete("consolesQuery");
+            )
+          }
+        >
           <div className=" flex flex-col gap-2 items-center cursor-pointer">
             <button className="rounded-4xl bg-white h-16 w-16 flex justify-center items-center p-2 cursor-pointer">
               <img alt="" className="w-full" src={platform.url}></img>

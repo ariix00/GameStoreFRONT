@@ -19,7 +19,7 @@ interface FiltersProps {
   setPricesArray: Dispatch<SetStateAction<string[]>>;
   pricesArray: string[];
   arrayGenres: string[];
-  fetchData: () => void;
+  fetchData: (x?: string) => void;
 }
 
 const Filters = ({
@@ -90,7 +90,7 @@ const Filters = ({
       <div
         className={clx(
           "fixed bg-stone-800 h-1/2 w-full flex z-40  flex-col transition-all duration-300",
-          isFilterActive ? "top-[50%]" : "top-[100%]"
+          isFilterActive ? "top-1/2" : "top-full"
         )}
       >
         <div className="w-full flex justify-end">

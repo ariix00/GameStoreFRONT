@@ -66,6 +66,7 @@ const AgregarProducto = ({
                   price: price,
                   count: count,
                   stock: stock,
+                  totalPrice: price * count,
                 },
                 prev
               )

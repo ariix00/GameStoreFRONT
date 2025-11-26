@@ -3,15 +3,14 @@ import Card from "../components/card";
 import Navbar from "../components/navbar";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import Filters from "../components/filters";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
 import { api } from "../config";
 import type { GamesByConsole } from "../types";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { GamesContext } from "../context/GamesContext";
 
 const ConsoleGames = () => {
-  console.log("sola");
+  console.log("hola");
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isFilterActive, setIsFilterActive] = useState(false);
@@ -28,9 +27,8 @@ const ConsoleGames = () => {
   const [arrayGenres, setArrayGenres] = useState<string[]>([]);
 
   const [arrayPrices, setArrayPrices] = useState<string[]>([]);
-  const [consoles, setConsoles] = useState("");
+  const [consoles, setConsoles] = useState<string | null>();
 
-  const { setPlatform } = useContext(GamesContext);
   const { platformValue } = useParams<{ platformValue: string | undefined }>();
 
   // useEffect(() => {
@@ -39,10 +37,6 @@ const ConsoleGames = () => {
   //   if (!genresParams) return;
   //   setArrayGenres(genresParams);
   // }, []);
-  let consolesQuery = "";
-  if (consoles) {
-    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
-  }
 
   useEffect(() => {
     (async function () {
@@ -57,9 +51,10 @@ const ConsoleGames = () => {
         }
         const searchParam = searchParams.get("searchQuery");
         setSearch(searchParam);
+        const consolesParams = searchParams.get("consolesQuery");
+        setConsoles(consolesParams);
         const data = await fetch(`${api}getPlatformNames`);
         const response = await data.json();
-
         setPlatforms(response);
       } catch (error) {
         console.log("error fetching databro", error);
@@ -94,8 +89,12 @@ const ConsoleGames = () => {
   if (search) {
     searchQuery = searchQuery + `&searchQuery=${search}`;
   }
+  let consolesQuery = "";
+  if (consoles) {
+    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
+  }
 
-  const fetchData = async () => {
+  const fetchData = async (consoleName: string | null = null) => {
     const query = `${api}getGamesByPlatform/${platformValue}?${consolesQuery}${pricesQuery}${genresQuery}${searchQuery}`;
     console.log(query);
     const params = new URLSearchParams();
@@ -109,6 +108,16 @@ const ConsoleGames = () => {
     if (search) {
       params.append("searchQuery", search);
     }
+    if (consoleName != null) {
+      params.append("consolesQuery", consoleName);
+    } else {
+      if (consoles != null) {
+        params.append("consolesQuery", consoles);
+      } else {
+        params.delete("consolesQuery");
+        setConsoles(null);
+      }
+    }
     setSearchParams(params);
 
     try {
@@ -120,6 +129,7 @@ const ConsoleGames = () => {
     }
   };
 
+  console.log(consoles);
   return (
     <>
       <div className="w-screen relative text-sm">
@@ -137,12 +147,12 @@ const ConsoleGames = () => {
           <PlatformChoice />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
-            PlayStation Games
+            {platformValue} Games
           </h1>
           <div className="flex gap-2 text-sm w-11/12 justify-start">
             <button
               className="rounded-xl px-2 border-2 border-stone-500"
-              onClick={() => setConsoles("")}
+              onClick={() => fetchData()}
             >
               All
             </button>
@@ -150,9 +160,7 @@ const ConsoleGames = () => {
               <button
                 key={index}
                 className="rounded-xl px-2 border-2 border-stone-500"
-                onClick={() => (
-                  setConsoles(c.consoleName), console.log(consoles)
-                )}
+                onClick={() => fetchData(c.consoleName)}
               >
                 {c.consoleName}
               </button>

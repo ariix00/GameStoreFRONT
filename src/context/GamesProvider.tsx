@@ -8,7 +8,6 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
   const [addCartNotAvailable, setAddCartNotAvailable] =
     useState<boolean>(false);
   const [cartCount, setCartCount] = useState<number>(0);
-  const [search, setSearch] = useState<string>("");
   const [platform, setPlatform] = useState<string>("PlayStation");
 
   console.log("se recagrgó la pagina");
@@ -20,17 +19,15 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
         if (item.name === addCart.name) {
           const newCount = item.count + addCart.count;
 
-          // if (newCount > item.stock) {
-          //   newCount = item.stock;
-
-          //   setAddCartNotAvailable(true);
-          //   setTimeout(() => setAddCartNotAvailable(false), 2000);
-          // }
           if (newCount > item.stock) {
             setAddCartNotAvailable(true);
             setTimeout(() => setAddCartNotAvailable(false), 2000);
           } else {
-            return { ...item, count: newCount };
+            return {
+              ...item,
+              count: newCount,
+              totalPrice: item.price * newCount,
+            };
           }
         }
         return item;
@@ -38,7 +35,10 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
     }
 
     console.log("agregado");
-    return [...cartItem, { ...addCart }];
+    return [
+      ...cartItem,
+      { ...addCart, totalPrice: addCart.price * addCart.count },
+    ];
   };
 
   // return cartItem.map((item) => {
@@ -64,8 +64,12 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
     return cartItem.map((item) => {
       if (item.name === increaseByName) {
         if (item.stock && item.count < item.stock) {
-          console.log("sumado");
-          return { ...item, count: item.count + 1 };
+          const newCount = item.count + 1;
+          return {
+            ...item,
+            count: newCount,
+            totalPrice: item.price * newCount,
+          };
         }
       }
       return item;
@@ -78,7 +82,12 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
     return cart.map((item) => {
       if (item.name === decreaseByName) {
         if (item.stock && item.count > 1) {
-          return { ...item, count: item.count - 1 };
+          const newCount = item.count - 1;
+          return {
+            ...item,
+            count: newCount,
+            totalPrice: item.price * newCount,
+          };
         }
       }
       return item;
@@ -99,11 +108,6 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
     return cartCount;
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    console.log(search);
-  };
-
   return (
     <GamesContext.Provider
       value={{
@@ -118,8 +122,7 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
         setCartCount,
         cartCountFunction,
         cartCount,
-        handleSearch,
-        search,
+
         platform,
         setPlatform,
       }}

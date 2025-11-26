@@ -21,6 +21,7 @@ export interface CartItem {
   count: number;
   price: number;
   image: string;
+  totalPrice: number;
 }
 export interface findByname {
   name: string;
