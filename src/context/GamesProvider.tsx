@@ -41,22 +41,6 @@ export const GamesProvider = ({ children }: PropsWithChildren) => {
     ];
   };
 
-  // return cartItem.map((item) => {
-  //   if (item.name == addCart.name) {
-  //     if (item.count > item.stock) {
-  //       setAddCartNotAvailable(true);
-  //       setTimeout(() => {
-  //         setAddCartNotAvailable(false);
-  //       }, 2000);
-  //       return { ...item, count: item.stock };
-  //     }
-  //     return { ...item, count: item.count + addCart.count };
-  //   } else {
-  //     setCartItem((prev) => [...prev, addCart]);
-  //   }
-  //   return item;
-  // });
-
   const increaseCartItemFromCart = (
     increaseByName: string,
     cartItem: CartItem[]

@@ -5,131 +5,87 @@ import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import Filters from "../components/filters";
 import { useEffect, useState } from "react";
 import PlatformChoice from "../components/plarformChoice";
+import { useParams, useSearchParams } from "react-router-dom";
+import { type GamesByConsole } from "../types";
 import { api } from "../config";
-import type { GamesByConsole } from "../types";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+
+interface Filter {
+  genres: string[];
+  prices: string[];
+  console?: string;
+}
 
 const ConsoleGames = () => {
-  console.log("hola");
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { platformValue } = useParams<{ platformValue: string }>();
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const [gamesByPlatform, setGameByPlatform] = useState<GamesByConsole[]>([]);
-  const [search, setSearch] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filter>({
+    genres: searchParams.getAll("genresQuery"),
+    prices: searchParams.getAll("pricesQuery"),
+    console: searchParams.get("consoleQuery") || "",
+  });
 
-  const [platforms, setPlatforms] = useState<string[] | null>(null);
+  const [tempFilters, setTempFilters] = useState<Filter>({
+    ...filters,
+  });
+
+  const [data, setData] = useState<GamesByConsole[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const fetchData = async (params: Filter) => {
+    setLoading(true);
+
+    const query = new URLSearchParams();
+
+    if (params.console) query.append("consoleQuery", params.console);
+    if (params.prices.length != 0)
+      query.append("pricesQuery", String(params.prices));
+    if (params.genres.length != 0)
+      query.append("genresQuery", String(params.genres));
+
+    const res = await fetch(`${api}getGamesByPlatform?${query.toString()}`);
+    const json = await res.json();
+    setData(json);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData(filters);
+
+    const query = new URLSearchParams();
+
+    if (filters.console) query.set("consoleQuery", filters.console);
+    if (filters.prices) {
+      filters.prices.forEach((price) => {
+        query.set("pricesQuery", price);
+      });
+    }
+    if (filters.genres) {
+      filters.genres.forEach((genre) => {
+        query.set("genresQuery", genre);
+      });
+    }
+    console.log(query);
+    setSearchParams(query);
+  }, [filters]);
+
+  const handleGenresChange = (selectedGenres: string[]) => {
+    setTempFilters((prev) => ({ ...prev, genres: selectedGenres }));
+  };
+
+  const applyFilters = () => {
+    setFilters((prev) => ({ ...prev, ...tempFilters }));
+  };
+  // const data = await fetch(`${api}getPlatformNames`);
+
+  // if (platforms === null) return <p>Cargando...</p>;
+
+  // const query = `${api}getGamesByPlatform/${platformValue}?${consolesQuery}${pricesQuery}${genresQuery}${searchQuery}`;
+
   const openFiltersMenu = () => {
     setIsFilterActive(true);
   };
-
-  //     if (!platformParam) return;
-  //     setPlatform(platformParam);
-  const [arrayGenres, setArrayGenres] = useState<string[]>([]);
-
-  const [arrayPrices, setArrayPrices] = useState<string[]>([]);
-  const [consoles, setConsoles] = useState<string | null>();
-
-  const { platformValue } = useParams<{ platformValue: string | undefined }>();
-
-  // useEffect(() => {
-  //   const queryParams = new URLSearchParams(location.search);
-  //   const genresParams = queryParams.getAll("genresQuery");
-  //   if (!genresParams) return;
-  //   setArrayGenres(genresParams);
-  // }, []);
-
-  useEffect(() => {
-    (async function () {
-      try {
-        const pricesParams = searchParams.getAll("pricesQuery");
-        if (pricesParams.length != 0) {
-          setArrayPrices(pricesParams);
-        }
-        const genresParams = searchParams.getAll("genresQuery");
-        if (genresParams.length != 0) {
-          setArrayGenres(genresParams);
-        }
-        const searchParam = searchParams.get("searchQuery");
-        setSearch(searchParam);
-        const consolesParams = searchParams.get("consolesQuery");
-        setConsoles(consolesParams);
-        const data = await fetch(`${api}getPlatformNames`);
-        const response = await data.json();
-        setPlatforms(response);
-      } catch (error) {
-        console.log("error fetching databro", error);
-      }
-    })();
-  }, [searchParams]);
-  // if (platforms === null) return <p>Cargando...</p>;
-
-  useEffect(() => {
-    if (!platformValue) return;
-    if (platforms == null) return;
-    if (!platformValue || !platforms.includes(platformValue)) {
-      navigate("/404");
-    }
-    fetchData();
-    // setPlatform(platformValue);
-  }, [platformValue, platforms]);
-
-  let pricesQuery = "";
-  if (arrayPrices.length > 0) {
-    arrayPrices.forEach((price) => {
-      pricesQuery = pricesQuery + `&pricesQuery=${price}`;
-    });
-  }
-  let genresQuery = "";
-  if (arrayGenres.length > 0) {
-    arrayGenres.forEach((genre) => {
-      genresQuery = genresQuery + `&genresQuery=${genre}`;
-    });
-  }
-  let searchQuery = "";
-  if (search) {
-    searchQuery = searchQuery + `&searchQuery=${search}`;
-  }
-  let consolesQuery = "";
-  if (consoles) {
-    consolesQuery = consolesQuery + `&consolesQuery=${consoles}`;
-  }
-
-  const fetchData = async (consoleName: string | null = null) => {
-    const query = `${api}getGamesByPlatform/${platformValue}?${consolesQuery}${pricesQuery}${genresQuery}${searchQuery}`;
-    console.log(query);
-    const params = new URLSearchParams();
-
-    arrayPrices.forEach((price) => {
-      params.append("pricesQuery", `${price}`);
-    });
-    arrayGenres.forEach((genre) => {
-      params.append("genresQuery", genre);
-    });
-    if (search) {
-      params.append("searchQuery", search);
-    }
-    if (consoleName != null) {
-      params.append("consolesQuery", consoleName);
-    } else {
-      if (consoles != null) {
-        params.append("consolesQuery", consoles);
-      } else {
-        params.delete("consolesQuery");
-        setConsoles(null);
-      }
-    }
-    setSearchParams(params);
-
-    try {
-      const data = await fetch(query);
-      const response = await data.json();
-      setGameByPlatform(response);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  console.log(consoles);
   return (
     <>
       <div className="w-screen relative text-sm">
@@ -147,28 +103,24 @@ const ConsoleGames = () => {
           <PlatformChoice />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
-            {platformValue} Games
+            ¿PlayStation Games
           </h1>
           <div className="flex gap-2 text-sm w-11/12 justify-start">
-            <button
-              className="rounded-xl px-2 border-2 border-stone-500"
-              onClick={() => fetchData()}
-            >
+            <button className="rounded-xl px-2 border-2 border-stone-500">
               All
             </button>
-            {gamesByPlatform.map((c, index) => (
+            {data.map((c, index) => (
               <button
                 key={index}
                 className="rounded-xl px-2 border-2 border-stone-500"
-                onClick={() => fetchData(c.consoleName)}
               >
                 {c.consoleName}
               </button>
             ))}
           </div>
           <div className="flex w-full flex-wrap justify-center">
-            {gamesByPlatform ? (
-              gamesByPlatform?.map((c) =>
+            {data ? (
+              data?.map((c) =>
                 c.games.map((game, index) => (
                   <Card
                     id={game.id}
@@ -188,13 +140,10 @@ const ConsoleGames = () => {
         </div>
       </div>
       <Filters
-        fetchData={fetchData}
         setIsFilterActive={setIsFilterActive}
         isFilterActive={isFilterActive}
-        setArrayGenres={setArrayGenres}
-        arrayGenres={arrayGenres}
-        setPricesArray={setArrayPrices}
-        pricesArray={arrayPrices}
+        handleGenresChange={handleGenresChange}
+        applyFilters={applyFilters}
       />
     </>
   );

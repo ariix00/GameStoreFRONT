@@ -5,10 +5,7 @@ interface Platforms {
   name: string;
   url: string;
 }
-// interface PlatformsChoiceProps {
-//   // setPlatform: (x: string) => void;
-//   // setConsoles?: (x: string) => void;
-// }
+
 const PlatformChoice = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [platforms, setPlatforms] = useState<Platforms[]>([]);
@@ -23,11 +20,7 @@ const PlatformChoice = () => {
       }
     })();
   }, []);
-  // const consoleReset = (x: string) => {
-  //   if (x != consoles) {
-  //     setConsoles("");
-  //   }
-  // };
+ 
 
   return (
     <div className="flex gap-10 w-11/12 text-sm justify-center overflow-x-scroll">
@@ -35,11 +28,6 @@ const PlatformChoice = () => {
         <NavLink
           to={`/ConsoleGames/${platform.name}`}
           key={index}
-          onClick={() =>
-            setSearchParams((prev) => 
-              prev.delete("consolesQuery");
-            )
-          }
         >
           <div className=" flex flex-col gap-2 items-center cursor-pointer">
             <button className="rounded-4xl bg-white h-16 w-16 flex justify-center items-center p-2 cursor-pointer">

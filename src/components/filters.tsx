@@ -5,8 +5,6 @@ import {
   useEffect,
   useState,
   // type ChangeEvent,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
 import { api } from "../config";
 import type { Genres } from "../types";
@@ -15,53 +13,24 @@ import { useSearchParams } from "react-router-dom";
 interface FiltersProps {
   setIsFilterActive: (x: boolean) => void;
   isFilterActive: boolean;
-  setArrayGenres: Dispatch<SetStateAction<string[]>>;
-  setPricesArray: Dispatch<SetStateAction<string[]>>;
-  pricesArray: string[];
-  arrayGenres: string[];
-  fetchData: (x?: string) => void;
+  handleGenresChange: (x: string[]) => void;
+  applyFilters: () => void;
 }
 
 const Filters = ({
   setIsFilterActive,
   isFilterActive,
-  setArrayGenres,
-  setPricesArray,
-  // pricesArray,
-  arrayGenres,
-  fetchData,
+  handleGenresChange,
+  applyFilters,
 }: FiltersProps) => {
   const closeFilters = () => {
     setIsFilterActive(false);
   };
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // const [customPrice, setCustomPrice] = useState(false);
+  const [arrayGenres, setArrayGenres] = useState<string[]>([]);
+  const [arrayPrices, setArrayPrices] = useState<string[]>();
 
-  // const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   switch (e.target.name) {
-  //     case "min": {
-  //       const min = e.target.valueAsNumber;
-
-  //       if (min < pricesArray[1]) {
-  //         setPricesArray([min, pricesArray[1]]);
-  //       }
-  //       break;
-  //     }
-
-  //     case "max": {
-  //       const max = e.target.valueAsNumber;
-  //       if (max > pricesArray[0]) {
-  //         setPricesArray([pricesArray[0], max]);
-  //       }
-  //       break;
-  //     }
-
-  //     default:
-  //       break;
-  //   }
-  //   console.log(pricesArray);
-  // };
   const [active, setActive] = useState(false);
   const handleActive = () => {
     if (active == true) {
@@ -71,6 +40,7 @@ const Filters = ({
     }
   };
   const [genres, setGenres] = useState<Genres[]>([]);
+
   useEffect(() => {
     (async function () {
       const data = await fetch(`${api}getGenres`);
@@ -78,6 +48,10 @@ const Filters = ({
       setGenres(response);
     })();
   }, []);
+
+  useEffect(() => {
+    handleGenresChange(arrayGenres);
+  }, [arrayGenres]);
 
   return (
     <>
@@ -146,49 +120,22 @@ const Filters = ({
               <div className="flex flex-col gap-1 p-2">
                 <button
                   className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setPricesArray(["20000", "30000"])}
+                  onClick={() => setArrayPrices(["20000", "30000"])}
                 >
                   de $20.000 a $30.000
                 </button>
                 <button
                   className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setPricesArray(["30000", "40000"])}
+                  onClick={() => setArrayPrices(["30000", "40000"])}
                 >
                   de $30.000 a $40.000
                 </button>
                 <button
                   className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setPricesArray(["40000", "50000"])}
+                  onClick={() => setArrayPrices(["40000", "50000"])}
                 >
                   de $40.000 a $50.000
                 </button>
-
-                {/* <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                  onClick={() => setCustomPrice(true)}
-                >
-                  Elegir Precio
-                </button>
-                <div className="flex">
-                  <input
-                    type="number"
-                    name="min"
-                    placeholder="Min. Precio"
-                    className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                    onChange={handlePriceChange}
-                    defaultValue={0}
-                    disabled={!customPrice}
-                  />
-                  <input
-                    type="number"
-                    name="max"
-                    placeholder="Máx. Precio"
-                    className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit"
-                    onChange={handlePriceChange}
-                    defaultValue={10000}
-                    disabled={!customPrice}
-                  />
-                </div> */}
               </div>
             </div>
           </div>
@@ -201,14 +148,14 @@ const Filters = ({
             <button
               className="w-3/12 p-1 text-yellow-300 cursor-pointer border-2 rounded-sm"
               onClick={() => (
-                setSearchParams(), setArrayGenres([]), setPricesArray([])
+                setSearchParams(), setArrayGenres([]), setArrayPrices([])
               )}
             >
               Limpiar Filtros
             </button>
             <button
               className="w-6/12 bg-yellow-300 text-stone-950 rounded-sm p-1 cursor-pointer"
-              onClick={() => fetchData()}
+              onClick={() => applyFilters()}
             >
               Ver Resultados
             </button>
