@@ -9,7 +9,7 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { type GamesByConsole } from "../types";
 import { api } from "../config";
 
-interface Filter {
+export interface Filter {
   genres: string[];
   prices: string[];
   console?: string;
@@ -20,8 +20,8 @@ const ConsoleGames = () => {
   const { platformValue } = useParams<{ platformValue: string }>();
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [filters, setFilters] = useState<Filter>({
-    genres: searchParams.getAll("genresQuery"),
-    prices: searchParams.getAll("pricesQuery"),
+    genres: searchParams.getAll("genresQuery") || [],
+    prices: searchParams.getAll("pricesQuery") || [],
     console: searchParams.get("consoleQuery") || "",
   });
 
@@ -144,6 +144,8 @@ const ConsoleGames = () => {
         isFilterActive={isFilterActive}
         handleGenresChange={handleGenresChange}
         applyFilters={applyFilters}
+        setTempFilters={setTempFilters}
+        tempFilters={tempFilters}
       />
     </>
   );

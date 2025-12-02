@@ -4,17 +4,22 @@ import { mdiClose } from "@mdi/js";
 import {
   useEffect,
   useState,
+  type Dispatch,
+  type SetStateAction,
   // type ChangeEvent,
 } from "react";
 import { api } from "../config";
 import type { Genres } from "../types";
 import { useSearchParams } from "react-router-dom";
+import type { Filter } from "../pages/consoleGames";
 
 interface FiltersProps {
   setIsFilterActive: (x: boolean) => void;
   isFilterActive: boolean;
   handleGenresChange: (x: string[]) => void;
   applyFilters: () => void;
+  tempFilters: Filter;
+  setTempFilters: (x: Filter | ((prev: Filter) => Filter)) => void;
 }
 
 const Filters = ({
@@ -22,13 +27,15 @@ const Filters = ({
   isFilterActive,
   handleGenresChange,
   applyFilters,
+  tempFilters,
+  setTempFilters,
 }: FiltersProps) => {
   const closeFilters = () => {
     setIsFilterActive(false);
   };
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [arrayGenres, setArrayGenres] = useState<string[]>([]);
+  // const [arrayGenres, setArrayGenres] = useState<string[]>([]);
   const [arrayPrices, setArrayPrices] = useState<string[]>();
 
   const [active, setActive] = useState(false);
@@ -49,10 +56,11 @@ const Filters = ({
     })();
   }, []);
 
-  useEffect(() => {
-    handleGenresChange(arrayGenres);
-  }, [arrayGenres]);
+  // useEffect(() => {
+  //   handleGenresChange(arrayGenres);
+  // }, [arrayGenres]);
 
+  console.log(tempFilters);
   return (
     <>
       <div
@@ -94,14 +102,24 @@ const Filters = ({
                         key={index}
                         className={clx(
                           "rounded-2xl border-2 p-1 px-3 border-stone-700 cursor-pointer",
-                          arrayGenres.includes(genre.name) ? "bg-stone-500" : ""
+                          tempFilters.genres?.includes(genre.name)
+                            ? "bg-stone-500"
+                            : ""
                         )}
                         onClick={() => (
-                          setArrayGenres((prev) => {
-                            if (prev.includes(genre.name)) {
-                              return prev.filter((g) => g !== genre.name);
+                          setTempFilters((prev) => {
+                            if (prev.genres?.includes(genre.name)) {
+                              return {
+                                ...prev,
+                                genres:
+                                  prev.genres.filter((g) => g !== genre.name) ||
+                                  [],
+                              };
                             } else {
-                              return [...prev, genre.name];
+                              return {
+                                ...prev,
+                                genres: [...prev.genres, genre.name],
+                              };
                             }
                           }),
                           handleActive()
@@ -147,9 +165,7 @@ const Filters = ({
           >
             <button
               className="w-3/12 p-1 text-yellow-300 cursor-pointer border-2 rounded-sm"
-              onClick={() => (
-                setSearchParams(), setArrayGenres([]), setArrayPrices([])
-              )}
+              onClick={() => (setSearchParams(), setArrayPrices([]))}
             >
               Limpiar Filtros
             </button>
