@@ -16,7 +16,7 @@ import type { Filter } from "../pages/consoleGames";
 interface FiltersProps {
   setIsFilterActive: (x: boolean) => void;
   isFilterActive: boolean;
-  handleGenresChange: (x: string[]) => void;
+  // handleGenresChange: (x: string[]) => void;
   applyFilters: () => void;
   tempFilters: Filter;
   setTempFilters: (x: Filter | ((prev: Filter) => Filter)) => void;
@@ -25,7 +25,7 @@ interface FiltersProps {
 const Filters = ({
   setIsFilterActive,
   isFilterActive,
-  handleGenresChange,
+  // handleGenresChange,
   applyFilters,
   tempFilters,
   setTempFilters,
@@ -38,14 +38,18 @@ const Filters = ({
   // const [arrayGenres, setArrayGenres] = useState<string[]>([]);
   const [arrayPrices, setArrayPrices] = useState<string[]>();
 
-  const [active, setActive] = useState(false);
-  const handleActive = () => {
-    if (active == true) {
-      setActive(false);
+  const [genreActive, setGenreActive] = useState(false);
+  const [priceActive, setPriceActive] = useState<number>();
+  const handleGenreActive = () => {
+    if (genreActive == true) {
+      setGenreActive(false);
     } else {
-      setActive(true);
+      setGenreActive(true);
     }
   };
+
+  const handlePriceActive = () => {};
+
   const [genres, setGenres] = useState<Genres[]>([]);
 
   useEffect(() => {
@@ -102,9 +106,8 @@ const Filters = ({
                         key={index}
                         className={clx(
                           "rounded-2xl border-2 p-1 px-3 border-stone-700 cursor-pointer",
-                          tempFilters.genres?.includes(genre.name)
-                            ? "bg-stone-500"
-                            : ""
+                          tempFilters.genres?.includes(genre.name) &&
+                            "bg-stone-500"
                         )}
                         onClick={() => (
                           setTempFilters((prev) => {
@@ -122,7 +125,7 @@ const Filters = ({
                               };
                             }
                           }),
-                          handleActive()
+                          handleGenreActive()
                         )}
                       >
                         {genre.name}
@@ -137,20 +140,44 @@ const Filters = ({
               </h1>
               <div className="flex flex-col gap-1 p-2">
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setArrayPrices(["20000", "30000"])}
+                  className={clx(
+                    "rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer",
+                    priceActive === 1 && "bg-stone-500"
+                  )}
+                  onClick={() => (
+                    setTempFilters((prev) => {
+                      return { ...prev, prices: ["20000", "30000"] };
+                    }),
+                    setPriceActive(1)
+                  )}
                 >
                   de $20.000 a $30.000
                 </button>
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setArrayPrices(["30000", "40000"])}
+                  className={clx(
+                    "rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer",
+                    priceActive === 2 && "bg-stone-500"
+                  )}
+                  onClick={() => (
+                    setTempFilters((prev) => {
+                      return { ...prev, prices: ["30000", "40000"] };
+                    }),
+                    setPriceActive(2)
+                  )}
                 >
                   de $30.000 a $40.000
                 </button>
                 <button
-                  className="rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer"
-                  onClick={() => setArrayPrices(["40000", "50000"])}
+                  className={clx(
+                    "rounded-2xl border-2 p-1 px-3 border-stone-700 w-fit cursor-pointer",
+                    priceActive === 3 && "bg-stone-500"
+                  )}
+                  onClick={() => (
+                    setTempFilters((prev) => {
+                      return { ...prev, prices: ["40000", "50000"] };
+                    }),
+                    setPriceActive(3)
+                  )}
                 >
                   de $40.000 a $50.000
                 </button>
@@ -165,7 +192,12 @@ const Filters = ({
           >
             <button
               className="w-3/12 p-1 text-yellow-300 cursor-pointer border-2 rounded-sm"
-              onClick={() => (setSearchParams(), setArrayPrices([]))}
+              onClick={() => (
+                setSearchParams(),
+                setTempFilters((prev) => {
+                  return { ...prev, genres: [], prices: [] };
+                })
+              )}
             >
               Limpiar Filtros
             </button>

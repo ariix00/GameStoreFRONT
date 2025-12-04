@@ -8,6 +8,7 @@ import PlatformChoice from "../components/plarformChoice";
 import { useParams, useSearchParams } from "react-router-dom";
 import { type GamesByConsole } from "../types";
 import { api } from "../config";
+import { clx } from "../utils/clx";
 
 export interface Filter {
   genres: string[];
@@ -34,17 +35,26 @@ const ConsoleGames = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const fetchData = async (params: Filter) => {
+    if (!platformValue) {
+      return;
+    }
     setLoading(true);
 
     const query = new URLSearchParams();
 
     if (params.console) query.append("consoleQuery", params.console);
-    if (params.prices.length != 0)
-      query.append("pricesQuery", String(params.prices));
-    if (params.genres.length != 0)
-      query.append("genresQuery", String(params.genres));
-
-    const res = await fetch(`${api}getGamesByPlatform?${query.toString()}`);
+    if (params.prices.length != 0) {
+      params.prices.forEach((price) => {
+        query.append("pricesQuery", String(price));
+      });
+    }
+    if (params.genres.length != 0) {
+      params.genres.forEach((genre) => {
+        query.append("genresQuery", String(genre));
+      });
+    }
+    const auxQuery = `${api}getGamesByPlatform/${platformValue}?${query}`;
+    const res = await fetch(auxQuery);
     const json = await res.json();
     setData(json);
     setLoading(false);
@@ -58,30 +68,20 @@ const ConsoleGames = () => {
     if (filters.console) query.set("consoleQuery", filters.console);
     if (filters.prices) {
       filters.prices.forEach((price) => {
-        query.set("pricesQuery", price);
+        query.append("pricesQuery", price);
       });
     }
     if (filters.genres) {
       filters.genres.forEach((genre) => {
-        query.set("genresQuery", genre);
+        query.append("genresQuery", genre);
       });
     }
-    console.log(query);
     setSearchParams(query);
-  }, [filters]);
-
-  const handleGenresChange = (selectedGenres: string[]) => {
-    setTempFilters((prev) => ({ ...prev, genres: selectedGenres }));
-  };
+  }, [filters, platformValue]);
 
   const applyFilters = () => {
     setFilters((prev) => ({ ...prev, ...tempFilters }));
   };
-  // const data = await fetch(`${api}getPlatformNames`);
-
-  // if (platforms === null) return <p>Cargando...</p>;
-
-  // const query = `${api}getGamesByPlatform/${platformValue}?${consolesQuery}${pricesQuery}${genresQuery}${searchQuery}`;
 
   const openFiltersMenu = () => {
     setIsFilterActive(true);
@@ -103,16 +103,34 @@ const ConsoleGames = () => {
           <PlatformChoice />
 
           <h1 className="text-white font-bold w-11/12 text-lg">
-            ¿PlayStation Games
+            {platformValue} Games
           </h1>
           <div className="flex gap-2 text-sm w-11/12 justify-start">
-            <button className="rounded-xl px-2 border-2 border-stone-500">
+            <button
+              className={clx(
+                "rounded-xl px-2 border-2 border-stone-500",
+                filters.console === "" && "bg-stone-500"
+              )}
+              onClick={() => {
+                setFilters((prev) => {
+                  return { ...prev, console: "" };
+                });
+              }}
+            >
               All
             </button>
-            {data.map((c, index) => (
+            {data.map((c) => (
               <button
-                key={index}
-                className="rounded-xl px-2 border-2 border-stone-500"
+                key={c.consoleId}
+                className={clx(
+                  "rounded-xl px-2 border-2 border-stone-500",
+                  filters.console === c.consoleName && "bg-stone-500"
+                )}
+                onClick={() => {
+                  setFilters((prev) => {
+                    return { ...prev, console: c.consoleName };
+                  });
+                }}
               >
                 {c.consoleName}
               </button>
@@ -121,14 +139,14 @@ const ConsoleGames = () => {
           <div className="flex w-full flex-wrap justify-center">
             {data ? (
               data?.map((c) =>
-                c.games.map((game, index) => (
+                c.games.map((game) => (
                   <Card
                     id={game.id}
                     carrouselCard={false}
                     name={game.name}
                     imageUrl={game.imageUrl}
                     price={game.price}
-                    key={index}
+                    key={game.id}
                   />
                 ))
               )
@@ -142,7 +160,7 @@ const ConsoleGames = () => {
       <Filters
         setIsFilterActive={setIsFilterActive}
         isFilterActive={isFilterActive}
-        handleGenresChange={handleGenresChange}
+        // handleGenresChange={handleGenresChange}
         applyFilters={applyFilters}
         setTempFilters={setTempFilters}
         tempFilters={tempFilters}
