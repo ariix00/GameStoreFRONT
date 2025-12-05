@@ -1,13 +1,7 @@
 import { clx } from "../utils/clx";
 import Icon from "@mdi/react";
 import { mdiClose } from "@mdi/js";
-import {
-  useEffect,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-  // type ChangeEvent,
-} from "react";
+import { useEffect, useState } from "react";
 import { api } from "../config";
 import type { Genres } from "../types";
 import { useSearchParams } from "react-router-dom";
@@ -33,10 +27,8 @@ const Filters = ({
   const closeFilters = () => {
     setIsFilterActive(false);
   };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [searchParams, setSearchParams] = useSearchParams();
-
-  // const [arrayGenres, setArrayGenres] = useState<string[]>([]);
-  const [arrayPrices, setArrayPrices] = useState<string[]>();
 
   const [genreActive, setGenreActive] = useState(false);
   const [priceActive, setPriceActive] = useState<number>();
@@ -47,8 +39,6 @@ const Filters = ({
       setGenreActive(true);
     }
   };
-
-  const handlePriceActive = () => {};
 
   const [genres, setGenres] = useState<Genres[]>([]);
 

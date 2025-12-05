@@ -14,6 +14,7 @@ export interface Filter {
   genres: string[];
   prices: string[];
   console?: string;
+  search?: string;
 }
 
 const ConsoleGames = () => {
@@ -24,6 +25,7 @@ const ConsoleGames = () => {
     genres: searchParams.getAll("genresQuery") || [],
     prices: searchParams.getAll("pricesQuery") || [],
     console: searchParams.get("consoleQuery") || "",
+    search: searchParams.get("searchQuery") || "",
   });
 
   const [tempFilters, setTempFilters] = useState<Filter>({
@@ -32,13 +34,10 @@ const ConsoleGames = () => {
 
   const [data, setData] = useState<GamesByConsole[]>([]);
 
-  const [loading, setLoading] = useState<boolean>(false);
-
   const fetchData = async (params: Filter) => {
     if (!platformValue) {
       return;
     }
-    setLoading(true);
 
     const query = new URLSearchParams();
 
@@ -53,11 +52,12 @@ const ConsoleGames = () => {
         query.append("genresQuery", String(genre));
       });
     }
+    if (params.search) query.append("searchQuery", params.search);
+
     const auxQuery = `${api}getGamesByPlatform/${platformValue}?${query}`;
     const res = await fetch(auxQuery);
     const json = await res.json();
     setData(json);
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -76,7 +76,9 @@ const ConsoleGames = () => {
         query.append("genresQuery", genre);
       });
     }
+    if (filters.search) query.set("searchQuery", filters.search);
     setSearchParams(query);
+    console.log(query);
   }, [filters, platformValue]);
 
   const applyFilters = () => {
@@ -89,7 +91,7 @@ const ConsoleGames = () => {
   return (
     <>
       <div className="w-screen relative text-sm">
-        <Navbar retroceso={true} />
+        <Navbar retroceso={true} filters={filters} setFilters={setFilters} />
         <div className="w-full flex flex-col text-xl gap-5 items-center ">
           <div className="w-full border-b-1 border-stone-500 flex">
             <button

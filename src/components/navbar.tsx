@@ -6,13 +6,16 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { clx } from "../utils/clx";
 import { useContext, useEffect, useState } from "react";
 import { GamesContext } from "../context/GamesContext";
+import type { Filter } from "../pages/consoleGames";
 interface NavBarProps {
   retroceso: boolean;
+  filters?: Filter;
+  setFilters?: (x: Filter | ((prev: Filter) => Filter)) => void;
 }
-const Navbar = ({ retroceso }: NavBarProps) => {
+const Navbar = ({ retroceso, filters, setFilters }: NavBarProps) => {
   const { cartCount, cartItem, setCartCount, cartCountFunction, platform } =
     useContext(GamesContext);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [search, setSearch] = useState<string>("");
   useEffect(() => {
     const searchParam = searchParams.get("searchQuery");
@@ -29,7 +32,13 @@ const Navbar = ({ retroceso }: NavBarProps) => {
   }, [cartItem]);
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      navigate(`/consoleGames/${platform}?searchQuery=${search}`);
+      if (filters && setFilters) {
+        setFilters((prev) => {
+          return { ...prev, search: search };
+        });
+      } else {
+        navigate(`/consoleGames/${platform}?searchQuery=${search}`);
+      }
     }
   };
 
